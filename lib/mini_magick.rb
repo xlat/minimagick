@@ -67,13 +67,12 @@ module MiniMagick
         elsif stream.is_a?(StringIO)
           # Do nothing, we want a StringIO-object
         elsif stream.respond_to? :path
-          if File.respond_to?(:binread)
+          if File.respond_to?(:binread) and /mingw32|mswin/ !~ RUBY_PLATFORM
             stream = StringIO.new File.binread(stream.path.to_s)
           else
             stream = StringIO.new File.open(stream.path.to_s,"rb") { |f| f.read }
           end
         end
-
         create(ext) do |f|
           while chunk = stream.read(8192)
             f.write(chunk)
